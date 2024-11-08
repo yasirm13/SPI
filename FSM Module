@@ -1,0 +1,40 @@
+module SPI_FSM(
+input enable, reset, clk,
+output reg [1:0] state,
+output reg [1:0] next_state
+);
+reg temp;
+// Define FSM states
+parameter IDLE = 2'b00;
+parameter TRANSFER = 2'b01;
+always @ (negedge reset) begin
+if (!reset) begin
+state <= IDLE;
+next_state <= IDLE;
+end
+else
+temp = 0;
+end
+// FSM state transition logic
+always @ (posedge clk ) begin
+if (clk) begin
+state <= next_state;
+case (state)
+IDLE: begin
+if (enable)
+next_state <= TRANSFER;
+else
+next_state <= IDLE;
+end
+TRANSFER: begin
+if (!enable)
+next_state <= IDLE;
+else
+next_state <= TRANSFER;
+end
+default: next_state <= IDLE;
+endcase
+end
+else temp =0 ;
+end
+endmodule
